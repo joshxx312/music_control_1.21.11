@@ -43,13 +43,13 @@ public abstract class MusicTrackerMixin {
     @Shadow
     private float volume;
 
-    @Shadow public abstract void play(MusicInstance music);
+    @Shadow public abstract void play(MusicSound music);
 
     @Unique
     private boolean displayPrompted = false;
 
     @Inject(method = "play", at = @At("HEAD"), cancellable = true)
-    private void playMusic(MusicInstance instance, CallbackInfo ci) {
+    private void playMusic(MusicSound instance, CallbackInfo ci) {
 
         MusicControlClient.currentEvent = instance != null && instance.music() != null
                 ? instance.music().sound().value().id()
@@ -169,7 +169,7 @@ public abstract class MusicTrackerMixin {
     }
 
     @WrapWithCondition(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/sound/MusicTracker;play(Lnet/minecraft/client/sound/MusicInstance;)V"))
-    private boolean cancelPlayIfZeroedVolume(MusicTracker instance, MusicInstance music) {
+    private boolean cancelPlayIfZeroedVolume(MusicTracker instance, MusicSound music) {
         return music.volume() > 0.f;
     }
 
@@ -178,7 +178,7 @@ public abstract class MusicTrackerMixin {
         if (this.current == null) return;
         if (ModConfig.get().general.timer.fadeDuration <= 0) return;
 
-        MusicInstance instance = this.client.getMusicInstance();
+        MusicSound instance = this.client.getMusicInstance();
         if (instance.music() == null) return;
 
         float delta = 1.f / (ModConfig.get().general.timer.fadeDuration * 20);
